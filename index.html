@@ -94,6 +94,20 @@
   }
   button.stop { background: #e95b5b; color: white; }
   .small { color: #aaa; font-size: 14px; line-height: 1.4; }
+  
+  .radio-group {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+}
 </style>
 </head>
 <body>
@@ -117,11 +131,17 @@
     </section>
 
     <section class="card">
-      <label for="countMode">Count display</label>
-      <select id="countMode">
-        <option value="simple" selected>Method book: 1, 2, 3... accents by position</option>
-        <option value="traditional">Traditional flamenco: 12, 1, 2...</option>
-      </select>
+      <label>Count Display</label>
+    
+      <label>
+        <input type="radio" name="countMode" value="simple" checked>
+        Method Book (1,2,3...)
+      </label>
+    
+      <label>
+        <input type="radio" name="countMode" value="traditional">
+        Traditional (12,1,2...)
+      </label>
     </section>
 
     <section class="card">
@@ -219,7 +239,7 @@ let index = 0;
 
 const compasEl = document.getElementById('compas');
 const bpmEl = document.getElementById('bpm');
-const countModeEl = document.getElementById('countMode');
+const countModeEls = document.querySelectorAll('input[name="countMode"]');
 const bpmValueEl = document.getElementById('bpmValue');
 const countEl = document.getElementById('count');
 const gridEl = document.getElementById('beatGrid');
@@ -228,7 +248,7 @@ const startStopEl = document.getElementById('startStop');
 
 function currentPattern() { return patterns[compasEl.value]; }
 function intervalMs() { return 60000 / Number(bpmEl.value); }
-function activeMode() { return countModeEl.value === 'traditional' ? 'traditional' : 'simple'; }
+function activeMode() { return document.querySelector('input[name="countMode"]:checked').value;}
 function labels() { return currentPattern()[activeMode() + 'Labels']; }
 function accents() { return currentPattern()[activeMode() + 'Accents']; }
 function displayBeat(i) { return labels()[i % labels().length]; }
@@ -305,7 +325,9 @@ function stop() {
 startStopEl.addEventListener('click', () => isRunning ? stop() : start());
 bpmEl.addEventListener('input', () => { bpmValueEl.textContent = bpmEl.value; });
 compasEl.addEventListener('change', () => { index = 0; renderGrid(); });
-countModeEl.addEventListener('change', renderGrid);
+countModeEls.forEach(radio => {
+    radio.addEventListener('change', renderGrid);
+});
 
 renderGrid();
 </script>
